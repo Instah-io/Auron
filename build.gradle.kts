@@ -5,7 +5,7 @@ allprojects {
         google()
         gradlePluginPortal()
     }
-
+    //TODO: Ensure correct repositories {}
     group = "io.instah.auron"
-    version = "1.1.0-SNAPSHOT"/*"1.1.0"*/
+    version = "LATEST-SNAPSHOT"/*"1.1.0"*/
 }

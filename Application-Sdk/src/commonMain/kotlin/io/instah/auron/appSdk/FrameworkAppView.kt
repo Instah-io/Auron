@@ -1,6 +1,7 @@
 package io.instah.auron.appSdk
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -13,7 +14,12 @@ internal fun FrameworkAppView(
 ) {
     AnimatedContent(
         targetState = TranslationManager.currentLanguage,
-        transitionSpec = { fadeIn() togetherWith fadeOut() }
+        transitionSpec = {
+            if (initialState == null) {
+                fadeIn(tween(0)) togetherWith
+                        fadeOut(tween(0))
+            } else fadeIn() togetherWith fadeOut()
+        }
     ) {
         content()
     }

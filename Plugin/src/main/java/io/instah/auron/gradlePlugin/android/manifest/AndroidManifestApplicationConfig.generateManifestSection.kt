@@ -25,8 +25,6 @@ internal fun AndroidManifestConfig.AndroidManifestApplicationConfig?.generateMan
                 android:launchMode="singleTop"
                 android:theme="@android:style/Theme.Material.Light.NoActionBar">
                 
-          ${additionalApplicationSectionFragments.joinToString("\n")}
-                
             <activity
                     android:exported="true"
                     android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"

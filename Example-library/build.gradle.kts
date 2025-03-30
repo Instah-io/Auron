@@ -1,7 +1,7 @@
 import io.instah.auron.permissions.Permission
 
 plugins {
-    id("io.instah.Auron-Gradle") version "1.1.0-SNAPSHOT"
+    id("io.instah.Auron-Gradle") version "LATEST-SNAPSHOT"
 }
 
 //TODO: Separate SDK into SDK and SDK-COMPOSE

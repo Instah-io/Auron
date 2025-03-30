@@ -86,9 +86,8 @@ class AndroidTargetLogic : AuronTargetLogic("mobileMain") {
                 permissions = config.permissions.flatMap { it.underlyingPermissionNames },
                 usedFeatures = config.permissions.flatMap { it.underlyingUsedFeatureNames },
                 applicationConfig = if (!config.isLibrary) AndroidManifestConfig.AndroidManifestApplicationConfig(
-                    name = config.applicationName,
-                    additionalApplicationSectionFragments = config.additionalAndroidApplicationSectionFragments
-                ) else null
+                    name = config.applicationName
+                ) else null, manifestConfigureScope = config.manifestConfigureScope
             ).generateManifest(localVfs(project.projectDir.absolutePath))
         )
 

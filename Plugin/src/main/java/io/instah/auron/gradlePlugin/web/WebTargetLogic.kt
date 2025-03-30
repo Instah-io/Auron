@@ -29,6 +29,7 @@ class WebTargetLogic : AuronTargetLogic() {
 
         val webMain = sourceSets.getByName("webMain")
         val webGeneratedMain = sourceSets.create("webGeneratedMain")
+        webGeneratedMain.dependsOn(sourceSets.getByName("commonMain"))
         webMain.dependsOn(webGeneratedMain)
 
         if (!config.isLibrary) {

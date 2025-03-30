@@ -3,11 +3,13 @@ package io.instah.auron.gradlePlugin.config
 import AuronTarget
 import io.instah.auron.gradlePlugin.util.addDependencies
 import io.instah.auron.permissions.Permission
+import korlibs.io.serialization.xml.Xml
 import korlibs.io.util.UUID
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
+//TODO: Allow multiple blocks of the same type for whole auron
 class AuronConfigScope(
     private val project: Project
 ) {
@@ -26,7 +28,7 @@ class AuronConfigScope(
         }
     internal var permissions: MutableSet<Permission> = mutableSetOf()
     internal var useCompose: Boolean = true
-    internal var additionalAndroidApplicationSectionFragments = listOf<String>()
+    internal var manifestConfigureScope: ManifestConfigureScope = ManifestConfigureScope()
     internal var minify = true
     internal var sourceSetBlocks = mutableListOf<NamedDomainObjectContainer<KotlinSourceSet>.() -> Unit>()
 
@@ -88,7 +90,7 @@ class AuronConfigScope(
         val android = "androidMain"
 
         operator fun String.invoke(block: AuronDependencyHandler.() -> Unit) {
-            val dependenciesSet =  mutableSetOf<Pair<DependencyType, Any>>()
+            val dependenciesSet = mutableSetOf<Pair<DependencyType, Any>>()
             block(AuronDependencyHandler(dependenciesSet))
             if (sourceSetDependenciesMap.contains(this)) {
                 sourceSetDependenciesMap[this]!!.addAll(dependenciesSet)
@@ -144,10 +146,7 @@ class AuronConfigScope(
     fun manifest(
         configure: ManifestConfigureScope.() -> Unit
     ) {
-        val scope = ManifestConfigureScope()
-        configure(scope)
-        val result = scope.build()
-        additionalAndroidApplicationSectionFragments = result.applicationSectionAdditions
+        configure(manifestConfigureScope)
     }
 
     data class ManifestConfigureScopeResult(
@@ -155,16 +154,38 @@ class AuronConfigScope(
     )
 
     class ManifestConfigureScope() {
-        private var applicationSectionAdditions = mutableListOf<String>()
+        internal var processes = mutableListOf<(Xml) -> Xml>()
+            private set
+        private var applicationSectionAdditions = mutableListOf<Xml>()
 
         fun addToApplicationSection(
             text: String
         ) {
-            applicationSectionAdditions.add(text)
+            processes.add { xml ->
+                Xml(
+                    name = "manifest",
+                    type = xml.type,
+                    attributes = xml.attributes,
+                    allChildren = xml.allChildren.map {
+                        if (it.name == "application") {
+                            Xml(
+                                name = "application",
+                                allChildren = it.allChildren + Xml.Raw(text),
+                                attributes = it.attributes,
+                                content = it.content,
+                                type = it.type
+                            )
+                        } else it
+                    }, content = ""
+                )
+            }
         }
 
-        fun build(): ManifestConfigureScopeResult {
-            return ManifestConfigureScopeResult(applicationSectionAdditions)
+        //TODO: Make the API easier
+        fun addXmlProcess(
+            process: (Xml) -> Xml
+        ) {
+            processes.add(process)
         }
     }
 

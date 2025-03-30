@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 fun Project.auron(
     block: AuronConfigScope.() -> Unit = {}
 ) {
-    if (group !is String) throw Exception("You must set a group")
+    if ((group as? String)?.isNotBlank() == false) throw Exception("You must set a group")
 
     val scope = AuronConfigScope(this)
     scope.block()

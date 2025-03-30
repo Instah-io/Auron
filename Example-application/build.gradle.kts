@@ -2,7 +2,7 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
-    id("io.instah.Auron-Gradle") version "1.1.0-SNAPSHOT"
+    id("io.instah.Auron-Gradle") version "LATEST-SNAPSHOT"
 }
 
 group = "com.example"

@@ -25,7 +25,7 @@ actual fun auronApp(
 
             AuronRuntimeManager.quitApp = ::exitApplication
 
-            window.addFocusListener(
+             window.addFocusListener(
                 object : FocusListener {
                     override fun focusGained(e: FocusEvent?) {
                         println("hi!")

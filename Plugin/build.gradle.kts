@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     `java-gradle-plugin`
-    id("com.vanniktech.maven.publish") version "0.30.0"
+    id("com.vanniktech.maven.publish")
     id("com.github.gmazzo.buildconfig") version "5.5.1"
     signing
 }
