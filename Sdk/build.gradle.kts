@@ -28,6 +28,8 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             api("androidx.activity:activity-compose:1.10.1")
+            implementation("androidx.glance:glance:1.2.0-alpha01")
+            implementation("androidx.glance:glance-appwidget:1.2.0-alpha01")
         }
 
         commonMain.dependencies {
@@ -36,11 +38,12 @@ kotlin {
             api(compose.runtime)
             api(compose.animation)
             api(project(":Permissions"))
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
             api(compose.material3)
         }
     }
 }
+//TODO: Add shadow jar function to desktop
 
 mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)

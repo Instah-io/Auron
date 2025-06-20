@@ -12,7 +12,7 @@ class WebTargetLogic : AuronTargetLogic() {
     @OptIn(ExperimentalWasmDsl::class)
     override fun executeInKotlinBlock(extension: KotlinMultiplatformExtension): KotlinSourceSet = extension.run {
         wasmJs("web") {
-            moduleName = extension.project.name
+            outputModuleName.set(extension.project.name)
 
             if (!config.isLibrary) {
                 binaries.executable()
@@ -20,6 +20,10 @@ class WebTargetLogic : AuronTargetLogic() {
                 browser {
                     commonWebpackConfig {
                         it.outputFileName = "${config.configUUID}-main.js"
+                    }
+
+                    if (config.useExperimentalWebOptimizations) {
+                        useEsModules()
                     }
                 }
             } else {

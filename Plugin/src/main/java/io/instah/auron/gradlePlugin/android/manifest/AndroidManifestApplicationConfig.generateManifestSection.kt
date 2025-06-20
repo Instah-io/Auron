@@ -24,6 +24,7 @@ internal fun AndroidManifestConfig.AndroidManifestApplicationConfig?.generateMan
                 android:supportsRtl="true"
                 android:launchMode="singleTop"
                 android:theme="@android:style/Theme.Material.Light.NoActionBar">
+          
                 
             <activity
                     android:exported="true"
@@ -38,3 +39,16 @@ internal fun AndroidManifestConfig.AndroidManifestApplicationConfig?.generateMan
         </application>
     """
 }
+
+/*in <application>
+<receiver
+                android:name="io.instah.auron.appSdk.WidgetProvider"
+                android:exported="true">
+                <intent-filter>
+                    <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                </intent-filter>
+                <meta-data
+                    android:name="android.appwidget.provider"
+                    android:resource="@xml/my_widget_info" />
+            </receiver>
+ */

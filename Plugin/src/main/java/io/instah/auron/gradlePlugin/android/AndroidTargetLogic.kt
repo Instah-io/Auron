@@ -6,6 +6,7 @@ import io.instah.auron.gradlePlugin.android.manifest.generateManifest
 import io.instah.auron.gradlePlugin.framework.AuronTargetLogic
 import io.instah.auron.gradlePlugin.util.getSdkDir
 import io.instah.auron.gradlePlugin.util.introducePropertyIfNotPresent
+import io.instah.auron.permissions.toAndroidPermissionNamesAndFeatures
 import korlibs.io.file.std.get
 import korlibs.io.file.std.localVfs
 import org.gradle.api.JavaVersion
@@ -83,8 +84,8 @@ class AndroidTargetLogic : AuronTargetLogic("mobileMain") {
 
         sourceSetDirectory["AndroidManifest.xml"].writeText(
             text = AndroidManifestConfig(
-                permissions = config.permissions.flatMap { it.underlyingPermissionNames },
-                usedFeatures = config.permissions.flatMap { it.underlyingUsedFeatureNames },
+                permissions = config.permissions.flatMap { it.toAndroidPermissionNamesAndFeatures().first } + config.customAndroidPermissions,
+                usedFeatures = config.permissions.flatMap { it.toAndroidPermissionNamesAndFeatures().second } + config.customAndroidFeatures,
                 applicationConfig = if (!config.isLibrary) AndroidManifestConfig.AndroidManifestApplicationConfig(
                     name = config.applicationName
                 ) else null, manifestConfigureScope = config.manifestConfigureScope

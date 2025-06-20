@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 fun Project.auron(
     block: AuronConfigScope.() -> Unit = {}
 ) {
-    if ((group as? String)?.isNotBlank() == false) throw Exception("You must set a group")
+    //TODO: Auron's own nav framework + voyager extensions
+    //TODO: Fix
+    if ((group as? String)?.isNotBlank() != true) throw Exception("You must set a group")
 
     val scope = AuronConfigScope(this)
     scope.block()
@@ -26,6 +28,13 @@ fun Project.auron(
         file = localVfs(project.rootProject.projectDir.absolutePath)["gradle.properties"],
         property = "kotlin.mpp.applyDefaultHierarchyTemplate", value = "false"
     )
+
+    if (scope.useExperimentalWebOptimizations) {
+        introducePropertyIfNotPresent(
+            file = localVfs(project.rootProject.projectDir.absolutePath)["gradle.properties"],
+            property = "kotlin.js.ir.output.granularity", value = "per-file"
+        )
+    }
 
     if (project.extensions.findByType(KotlinMultiplatformExtension::class.java) == null) {
         project.logger.warn(bold(

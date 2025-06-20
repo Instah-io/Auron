@@ -59,14 +59,14 @@ mavenPublishing {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:2.1.10")
+    implementation("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:2.1.20")
     implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:latest.release")
     api("com.android.library:com.android.library.gradle.plugin:8.7.3")
     api("com.android.application:com.android.application.gradle.plugin:8.7.3")
     implementation("com.soywiz.korge:korge-core:latest.release")
     implementation("org.jetbrains.compose:compose-gradle-plugin:1.7.3")
-    implementation("org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:2.1.10")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+    implementation("org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:2.1.20")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
     implementation("com.github.ajalt.mordant:mordant:3.0.2")
     implementation(project(":Permissions"))
 }

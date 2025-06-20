@@ -2,29 +2,22 @@ package io.instah.auron.appSdk
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import io.instah.auron.mainLink.mainLink
+import io.instah.auron.sdk.App
+import io.instah.auron.sdk.AuronRuntimeManager
+import io.instah.auron.sdk.permissions.PermissionManager
+import io.instah.auron.sdk.runtimeManager.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.withLock
-import io.instah.auron.sdk.App
-import io.instah.auron.sdk.AuronRuntimeManager
-import io.instah.auron.permissions.ConfiguredPermission
-import io.instah.auron.sdk.permissions.PermissionDecisionResult
-import io.instah.auron.sdk.permissions.PermissionManager
-import io.instah.auron.sdk.permissions.PermissionManagerCommon
-import io.instah.auron.sdk.runtimeManager.checkIsManualPermissionGrantRequired
-import io.instah.auron.sdk.runtimeManager.checkIsPermissionGranted
-import io.instah.auron.sdk.runtimeManager.executeInActivity
-import io.instah.auron.sdk.runtimeManager.getSharedPreferences
-import io.instah.auron.sdk.runtimeManager.goToAppSettings
-import io.instah.auron.sdk.runtimeManager.permissionRequestLauncher
 import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
@@ -50,7 +43,7 @@ class MainActivity : ComponentActivity() {
 
         AuronRuntimeManager.goToAppSettings = {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-            intent.data = Uri.parse("package:${baseContext.packageName}")
+            intent.data = "package:${baseContext.packageName}".toUri()
             startActivity(intent)
         }
 
@@ -70,26 +63,21 @@ class MainActivity : ComponentActivity() {
                         getSharedPreferences("auron:permission-data", MODE_PRIVATE)
                             .getBoolean("initial-permission-grant-$permissionName", true)
                     ) {
-                        AuronRuntimeAppManager.permissionDataPreferencesMutex.withLock {
-                            getSharedPreferences("auron:permission-data", MODE_PRIVATE).edit().putBoolean(
-                                "initial-permission-grant-$permissionName", false
-                            ).apply()
+                        AuronAndroidRuntimeAppManager.permissionDataPreferencesMutex.withLock {
+                            getSharedPreferences("auron:permission-data", MODE_PRIVATE).edit {
+                                putBoolean(
+                                    "initial-permission-grant-$permissionName", false
+                                )
+                            }
                         }
                     }
                 }
 
-                PermissionManagerCommon.onPermissionDecision.emit(
-                    PermissionDecisionResult(
-                        permissionsGranted = ConfiguredPermission.getPermissionInstances(
-                            permissions.filter { it.value }.map { it.key }
-                        ), permissionsDeniedAdvanced = ConfiguredPermission
-                            .getPermissionInstancesBasedOnPartialPermissionNames(
-                                permissions.filter { !it.value }.map { it.key }
-                            ).associate { permission ->
-                                PermissionManager.checkIsManualInterventionRequired(permission) to permission
-                            }
-                    )
-                )
+                PermissionManager.onPermissionDecision.emit(permissions.firstNotNullOf {
+                    if (it.key.startsWith("auron-fake-permissions:permission-request-uuid-")) {
+                        it.key.removePrefix("auron-fake-permissions:permission-request-uuid-")
+                    } else null
+                })
             }
         }
 
@@ -97,7 +85,7 @@ class MainActivity : ComponentActivity() {
             it(this@MainActivity)
         }
 
-        AuronRuntimeAppManager.initSetContentLambda = { content ->
+        AuronAndroidRuntimeAppManager.initSetContentLambda = { content ->
             setContent(
                 content = content
             )

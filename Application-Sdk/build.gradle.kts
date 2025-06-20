@@ -29,6 +29,8 @@ kotlin {
         androidMain.dependencies {
             api("androidx.activity:activity-compose:1.10.1")
             compileOnly(project(":Main-Link-Dummy"))
+            implementation("androidx.glance:glance:1.2.0-alpha01")
+            implementation("androidx.glance:glance-appwidget:1.2.0-alpha01")
         }
 
         commonMain.dependencies {

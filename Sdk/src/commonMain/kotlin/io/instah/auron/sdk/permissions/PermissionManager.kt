@@ -5,7 +5,7 @@ import io.instah.auron.permissions.ConfiguredPermission
 expect object PermissionManager {
     suspend fun requestPermissions(
         vararg permissions: ConfiguredPermission
-    ): PermissionDecisionResult
+    )
 
     fun goToAppSettings()
 

@@ -15,9 +15,12 @@ class AuronConfigScope(
 ) {
     internal var jvmToolchain = 21
 
-    internal var targets = setOf<AuronTarget>(
+    internal var targets = setOf(
         AuronTarget.Android, AuronTarget.Web, AuronTarget.Desktop
     )
+
+    internal val customAndroidPermissions = mutableSetOf<String>()
+    internal val customAndroidFeatures = mutableSetOf<String>()
 
     internal val configUUID = UUID.randomUUID().toString()
     internal var isLibrary = false
@@ -31,6 +34,7 @@ class AuronConfigScope(
     internal var manifestConfigureScope: ManifestConfigureScope = ManifestConfigureScope()
     internal var minify = true
     internal var sourceSetBlocks = mutableListOf<NamedDomainObjectContainer<KotlinSourceSet>.() -> Unit>()
+    internal var useExperimentalWebOptimizations = false
 
     internal fun createAppId(appName: String): String {
         return project.group.toString() + "." + appName.lowercase().replace(" ", "_")
@@ -56,6 +60,14 @@ class AuronConfigScope(
 
     enum class DependencyType {
         Implementation, Api, CompileOnly
+    }
+
+    fun addCustomAndroidPermission(permission: String) {
+        customAndroidPermissions.add(permission)
+    }
+
+    fun addCustomAndroidFeature(feature: String) {
+        customAndroidFeatures.add(feature)
     }
 
     open inner class AuronDependencyHandler(
@@ -119,6 +131,10 @@ class AuronConfigScope(
                 }
             }
         }
+    }
+    
+    fun useExperimentalWebOptimizations() {
+        useExperimentalWebOptimizations = true
     }
 
     fun application(
