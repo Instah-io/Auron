@@ -1,6 +1,4 @@
 @file:OptIn(ExperimentalWasmDsl::class)
-
-import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -10,7 +8,7 @@ plugins {
     kotlin("plugin.compose")
     id("com.vanniktech.maven.publish")
     kotlin("plugin.serialization")
-    signing
+    //signing
 }
 
 kotlin {
@@ -38,7 +36,7 @@ kotlin {
             api(compose.runtime)
             api(compose.animation)
             api(project(":Permissions"))
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
             api(compose.material3)
         }
     }
@@ -46,8 +44,8 @@ kotlin {
 //TODO: Add shadow jar function to desktop
 
 mavenPublishing {
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-    signAllPublications()
+    publishToMavenCentral()
+    //signAllPublications()
 
     coordinates(group.toString(), "sdk", version.toString())
 
@@ -82,11 +80,11 @@ mavenPublishing {
 }
 
 android {
-    compileSdkVersion = "android-35"
+    compileSdkVersion = "android-36"
     namespace = "io.instah.auron"
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 28
     }
 
     buildFeatures {
@@ -94,7 +92,7 @@ android {
     }
 }
 
-signing {
+/*signing {
     useGpgCmd()
     sign(publishing.publications)
-}
+}*/

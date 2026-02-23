@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 //TODO: Add support for PWAs
 class WebTargetLogic : AuronTargetLogic() {
     @OptIn(ExperimentalWasmDsl::class)
-    override fun executeInKotlinBlock(extension: KotlinMultiplatformExtension): KotlinSourceSet = extension.run {
+    override fun executeInKotlinBlock(kotlinExtension: KotlinMultiplatformExtension): KotlinSourceSet = kotlinExtension.run {
         wasmJs("web") {
-            outputModuleName.set(extension.project.name)
+            outputModuleName.set(kotlinExtension.project.name)
 
             if (!config.isLibrary) {
                 binaries.executable()

@@ -35,12 +35,21 @@ class AuronConfigScope(
     internal var minify = true
     internal var sourceSetBlocks = mutableListOf<NamedDomainObjectContainer<KotlinSourceSet>.() -> Unit>()
     internal var useExperimentalWebOptimizations = false
+    internal val webScripts = mutableListOf<String>()
 
     internal fun createAppId(appName: String): String {
         return project.group.toString() + "." + appName.lowercase().replace(" ", "_")
             .filter {
                 (('0'..'9') + ('a'..'z') + '_').contains(it)
             }
+    }
+
+    fun web(
+        configure: WebConfigureScope.() -> Unit
+    ) {
+        val scope = WebConfigureScope()
+        configure(scope)
+        webScripts.addAll(scope.scripts)
     }
 
     fun setTargets(
@@ -168,6 +177,12 @@ class AuronConfigScope(
     data class ManifestConfigureScopeResult(
         val applicationSectionAdditions: List<String>
     )
+
+    class WebConfigureScope {
+        internal val scripts = mutableListOf<String>()
+
+        fun addScript(code: String) { scripts.add(code) }
+    }
 
     class ManifestConfigureScope() {
         internal var processes = mutableListOf<(Xml) -> Xml>()

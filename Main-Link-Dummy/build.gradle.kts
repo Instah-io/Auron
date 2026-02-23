@@ -10,10 +10,10 @@ kotlin {
 }
 
 android {
-    compileSdkVersion = "android-35"
+    compileSdkVersion = "android-36"
     namespace = "io.instah.auron"
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 28
     }
 }

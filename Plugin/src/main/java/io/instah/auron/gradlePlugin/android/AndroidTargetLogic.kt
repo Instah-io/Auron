@@ -29,7 +29,7 @@ class AndroidTargetLogic : AuronTargetLogic("mobileMain") {
 
         val androidExtension = project.extensions.findByName("android") as? BaseExtension
         androidExtension?.namespace = project.group.toString()
-        androidExtension?.compileSdkVersion = "android-35"
+        androidExtension?.compileSdkVersion = "android-36"
 
         androidExtension?.compileOptions {
             it.sourceCompatibility = JavaVersion.toVersion(config.jvmToolchain)
@@ -37,11 +37,11 @@ class AndroidTargetLogic : AuronTargetLogic("mobileMain") {
         }
 
         androidExtension?.defaultConfig {
-            it.minSdk = 24
-            it.targetSdk = 35
+            it.minSdk = 28
+            it.targetSdk = 36
 
             if (!config.isLibrary) {
-                it.applicationId = "${project.group}.${config.applicationId}"
+                it.applicationId = config.applicationId
             }
         }
 
@@ -69,13 +69,13 @@ class AndroidTargetLogic : AuronTargetLogic("mobileMain") {
         val generatedCodeDir = androidGeneratedMain.kotlin.srcDirs.first()
 
         if (!config.isLibrary) {
-            generatedCodeDir?.mkdirs()
-            generatedCodeDir?.get("mainLink.kt")?.writeText(
+            generatedCodeDir.mkdirs()
+            generatedCodeDir["mainLink.kt"].writeText(
                 text = """
-                    package io.instah.auron.mainLink
-
-                    val mainLink: () -> Unit = { ${project.group}.main() }
-                """.trimIndent()
+                            package io.instah.auron.mainLink
+        
+                            val mainLink: () -> Unit = { ${project.group}.main() }
+                        """.trimIndent()
             )
         }
 

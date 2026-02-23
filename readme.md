@@ -8,7 +8,7 @@
 
 1. Add the auron plugin by using `id("io.instah.Auron-Gradle") version "1.1.0"` *for the newest features append
 `-SNAPSHOT` to the version
-2. Download the android sdk version `35`
+2. Download the android sdk version `36`
 
 You should be now able to easily configure your project with auron!
 
@@ -37,3 +37,4 @@ TODO:
 - support for apple targets
 - support for translation AI models
 - support for localized formats for ex. dates
+- compose for android native

@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 class DesktopTargetLogic : AuronTargetLogic() {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    override fun executeInKotlinBlock(extension: KotlinMultiplatformExtension): KotlinSourceSet = extension.run {
+    override fun executeInKotlinBlock(kotlinExtension: KotlinMultiplatformExtension): KotlinSourceSet = kotlinExtension.run {
         jvm("desktop") {
             if (!config.isLibrary) {
                 mainRun {

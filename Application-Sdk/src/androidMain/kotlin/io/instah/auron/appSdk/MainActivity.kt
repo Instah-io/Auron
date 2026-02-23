@@ -1,12 +1,18 @@
 package io.instah.auron.appSdk
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.hardware.display.DisplayManager
 import android.os.Bundle
 import android.provider.Settings
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import io.instah.auron.mainLink.mainLink
@@ -14,6 +20,8 @@ import io.instah.auron.sdk.App
 import io.instah.auron.sdk.AuronRuntimeManager
 import io.instah.auron.sdk.permissions.PermissionManager
 import io.instah.auron.sdk.runtimeManager.*
+import io.instah.auron.sdk.window.LocalWindow
+import io.instah.auron.sdk.window.Window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,6 +29,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("SwitchIntDef")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -73,11 +82,11 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                PermissionManager.onPermissionDecision.emit(permissions.firstNotNullOf {
+                permissions.firstNotNullOfOrNull {
                     if (it.key.startsWith("auron-fake-permissions:permission-request-uuid-")) {
                         it.key.removePrefix("auron-fake-permissions:permission-request-uuid-")
                     } else null
-                })
+                }?.let { PermissionManager.onPermissionDecision.emit(it) }
             }
         }
 
@@ -85,9 +94,33 @@ class MainActivity : ComponentActivity() {
             it(this@MainActivity)
         }
 
+        val setScreenOrientation: (Window.ScreenOrientation, Boolean) -> Unit = { orientation, _ ->
+            requestedOrientation = when (orientation) {
+                Window.ScreenOrientation.Landscape -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                Window.ScreenOrientation.Portrait -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            }
+        }
+
+        AuronRuntimeAppManager.mainWindow = Window(
+            getScreenOrientation = {
+                when (getSystemService(WindowManager::class.java).defaultDisplay.orientation) {
+                    Configuration.ORIENTATION_PORTRAIT -> Window.ScreenOrientation.Portrait
+                    Configuration.ORIENTATION_LANDSCAPE -> Window.ScreenOrientation.Landscape
+                    else -> Window.ScreenOrientation.Undefined
+                }
+            }, setScreenOrientation = setScreenOrientation, unlockScreenOrientation = {
+                setScreenOrientation(Window.ScreenOrientation.Undefined, false)
+            }
+        )
+
         AuronAndroidRuntimeAppManager.initSetContentLambda = { content ->
             setContent(
-                content = content
+                content = {
+                    CompositionLocalProvider(LocalWindow provides AuronRuntimeAppManager.mainWindow) {
+                        content()
+                    }
+                }
             )
         }
 

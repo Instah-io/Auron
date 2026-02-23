@@ -1,6 +1,5 @@
 @file:OptIn(ExperimentalWasmDsl::class)
 
-import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -9,7 +8,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.compose")
     id("com.vanniktech.maven.publish")
-    signing
+    //signing
 }
 
 kotlin {
@@ -45,8 +44,8 @@ kotlin {
 }
 
 mavenPublishing {
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-    signAllPublications()
+    publishToMavenCentral()
+    //signAllPublications()
 
     coordinates(group.toString(), "app-sdk", version.toString())
 
@@ -81,11 +80,11 @@ mavenPublishing {
 }
 
 android {
-    compileSdkVersion = "android-35"
+    compileSdkVersion = "android-36"
     namespace = "io.instah.auron"
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 28
     }
 
     buildFeatures {
@@ -93,7 +92,8 @@ android {
     }
 }
 
+/*
 signing {
     useGpgCmd()
     sign(publishing.publications)
-}
+}*/

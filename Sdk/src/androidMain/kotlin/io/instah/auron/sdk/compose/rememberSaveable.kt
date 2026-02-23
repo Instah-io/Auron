@@ -2,6 +2,7 @@ package io.instah.auron.sdk.compose
 
 import androidx.compose.runtime.*
 
+//implement reflection based memory snapshots for after app memory free restore
 //inputs and custom keys practically make no sense
 @Composable
 actual fun <T : Any> rememberSaveable(

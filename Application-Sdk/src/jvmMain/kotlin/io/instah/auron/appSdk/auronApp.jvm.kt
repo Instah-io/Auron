@@ -19,39 +19,41 @@ import java.util.Locale
 
 actual fun auronApp(
     title: String, ui: @Composable (() -> Unit)
-) = application {
-    Window(onCloseRequest = ::exitApplication, title = title) {
-        LaunchedEffect(Unit) {
-            AuronRuntimeAppManager.mainWindow = Window(
-                setTitle = { window.title = it },
-                initialTitle = title
-            )
+) {
+    Language.entries.firstOrNull {
+        it.name == Locale.getDefault().language+"_"+Locale.getDefault().country
+    }?.let { language ->
+        TranslationManager.setLanguage(language)
+    }
 
-            Language.entries.firstOrNull {
-                it.name == Locale.getDefault().language+"_"+Locale.getDefault().country
-            }?.let { language ->
-                TranslationManager.setLanguage(language)
+    application {
+        Window(onCloseRequest = ::exitApplication, title = title) {
+            LaunchedEffect(Unit) {
+                AuronRuntimeAppManager.mainWindow = Window(
+                    setTitle = { window.title = it },
+                    initialTitle = title
+                )
+
+                AuronRuntimeManager.quitApp = ::exitApplication
+
+                window.addFocusListener(
+                    object : FocusListener {
+                        override fun focusGained(e: FocusEvent?) {
+                            println("hi!")
+                            App.Callbacks.resume.registered.forEach {
+                                it.value()
+                            }
+                        }
+
+                        override fun focusLost(e: FocusEvent?) {}
+                    }
+                )
             }
 
-            AuronRuntimeManager.quitApp = ::exitApplication
-
-             window.addFocusListener(
-                object : FocusListener {
-                    override fun focusGained(e: FocusEvent?) {
-                        println("hi!")
-                        App.Callbacks.resume.registered.forEach {
-                            it.value()
-                        }
-                    }
-
-                    override fun focusLost(e: FocusEvent?) {}
+            CompositionLocalProvider(LocalWindow provides AuronRuntimeAppManager.mainWindow) {
+                FrameworkAppView {
+                    ui()
                 }
-            )
-        }
-
-        CompositionLocalProvider(LocalWindow provides AuronRuntimeAppManager.mainWindow) {
-            FrameworkAppView {
-                ui()
             }
         }
     }

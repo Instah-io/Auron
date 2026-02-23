@@ -8,6 +8,7 @@ import kotlinx.serialization.json.Json
 import io.instah.auron.sdk.AuronRuntimeManager
 import io.instah.auron.sdk.runtimeManager.getSharedPreferences
 import kotlin.reflect.KProperty
+import androidx.core.content.edit
 
 @OptIn(ExperimentalSerializationApi::class)
 actual inline operator fun <reified T> PropertyStore.field<T>.getValue(thisRef: Any?, property: KProperty<*>): T =
@@ -17,16 +18,7 @@ actual inline operator fun <reified T> PropertyStore.field<T>.getValue(thisRef: 
                 property.name, "0"
             )!!
 
-            if (value == "0") {
-                return@runBlocking this@getValue.default
-            }
-
-            if (value == "1") {
-                return@runBlocking null as T
-            }
-
-            //value is 2 then
-            return@runBlocking Json.decodeFromString<T>(value.drop(1))
+            return@runBlocking PropertyStore.decodeStringStorageValue(this@getValue.default, value)
         }
     }
 
@@ -38,14 +30,12 @@ actual inline operator fun <reified T> PropertyStore.field<T>.setValue(
 ) =
     runBlocking {
         this@setValue.parent.mutex.withLock {
-            var result = if (value == null) {
-                "1"
-            } else {
-                "2" + Json.encodeToString(value)
-            }
+            val result = PropertyStore.encodeStringStorageValue(value)
 
-            AuronRuntimeManager.getSharedPreferences!!("app:${this@setValue.parent.name}").edit().putString(
-                property.name, result
-            ).apply()
+            AuronRuntimeManager.getSharedPreferences!!("app:${this@setValue.parent.name}").edit {
+                putString(
+                    property.name, result
+                )
+            }
         }
     }
