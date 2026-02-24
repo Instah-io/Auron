@@ -45,6 +45,15 @@ class AndroidTargetLogic : AuronTargetLogic("mobileMain") {
             }
         }
 
+        androidExtension?.buildTypes {
+            it.getByName("release") {
+                it.setMinifyEnabled(true)
+                if (!config.isLibrary) {
+                    it.isShrinkResources = true
+                }
+            }
+        }
+
         androidExtension?.buildFeatures?.compose = config.useCompose
 
         /*val mainSourceSet = androidExtension?.sourceSets?.getByName("main")
