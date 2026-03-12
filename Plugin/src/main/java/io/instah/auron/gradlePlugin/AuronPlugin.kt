@@ -24,11 +24,12 @@ class AuronPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         var additionalPropertiesFileExists = false
         additionalPropertiesFile = localVfs(target.projectDir.absolutePath)["auron.json"]
+        val noAuronFileExists = runBlocking { localVfs(target.projectDir.absolutePath)[".noAuron"].exists() }
 
         runBlocking {
             if (additionalPropertiesFile.exists()) {
                 additionalPropertiesFileExists = true
-                val additionalProperties = Json.Default.decodeFromString<AuronAdditionalProperties>(
+                val additionalProperties = Json.decodeFromString<AuronAdditionalProperties>(
                     additionalPropertiesFile.readString()
                 )
 
@@ -36,8 +37,9 @@ class AuronPlugin : Plugin<Project> {
             }
         }
 
-        if (additionalPropertiesFileExists) {
+        if (additionalPropertiesFileExists || noAuronFileExists) {
             target.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
+            if (noAuronFileExists) return
         }
 
         if (additionalProperties.targets.contains(AuronTarget.Android)) {

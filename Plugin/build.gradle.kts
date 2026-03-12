@@ -33,14 +33,6 @@ mavenPublishing {
         inceptionYear = "2023"
         url = "https://github.com/instah-pl/auron"
 
-        developers {
-            developer {
-                id = "rebokdev"
-                name = "rebokdev"
-                email = "rebok@duck.com"
-            }
-        }
-
         licenses {
             license {
                 name = "MIT license"
@@ -49,20 +41,20 @@ mavenPublishing {
         }
 
         scm {
-            connection = "scm:git:https://github.com/instah-pl/auron.git"
+            connection = "scm:git:https://github.com/instah-io/auron.git"
             developerConnection = "scm:git:git@github.com:instah-pl/auron.git"
-            url = "https://github.com/instah-pl/auron"
+            url = "https://github.com/instah-io/auron"
         }
     }
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:2.3.10")
+    api("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:2.3.10")
     implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:latest.release")
     api("com.android.library:com.android.library.gradle.plugin:8.12.3")
     api("com.android.application:com.android.application.gradle.plugin:8.12.3")
     implementation("com.soywiz.korge:korge-core:latest.release")
-    implementation("org.jetbrains.compose:compose-gradle-plugin:1.10.1")
+    implementation("org.jetbrains.compose:compose-gradle-plugin:1.10.2")
     implementation("org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:2.3.10")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
     implementation("com.github.ajalt.mordant:mordant:3.0.2")
